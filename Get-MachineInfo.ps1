@@ -24,6 +24,6 @@ function Get-MachineInfo {
         $Session|Remove-CimSession
 
         #OutpuData
-        #Todo
+        $os | Select-Object 
     }#Foreach
 }#Function
