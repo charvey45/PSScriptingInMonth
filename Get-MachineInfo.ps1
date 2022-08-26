@@ -1,29 +1,39 @@
 function Get-MachineInfo {
+    
+    [CmdletBinding()]
     param (
+        [Parameter(ValueFromPipeline=$true)]
         [string[]]$ComputerName,
         [string]$LogFailuresToPath,
         [string]$Protocol="Wsman",
         [switch]$ProtocolFallback
     )
     
-    foreach ($computer in $ComputerName) {
-        #Establish Session Protocol
-        if ($Protocol -eq 'Dcom'){
-            $option = New-CimSessionOption -Protocol Dcom
-        } else {
-            $option = New-CimSessionOption -Protocol Wsman
-        }
+    Begin{}
 
-        #Connect session
-        $Session = New-CimSession -ComputerName $computer -SessionOption $option
+    PROCESS{
+        foreach ($computer in $ComputerName) {
+            #Establish Session Protocol
+            if ($Protocol -eq 'Dcom'){
+                $option = New-CimSessionOption -Protocol Dcom
+            } else {
+                $option = New-CimSessionOption -Protocol Wsman
+            }
 
-        #query data
-        $os= Get-CimInstance -ClassName Win32_OperatingSystem -CimSession $Session
+            #Connect session
+            $Session = New-CimSession -ComputerName $computer -SessionOption $option
 
-        #Close session
-        $Session|Remove-CimSession
+            #query data
+            $os= Get-CimInstance -ClassName Win32_OperatingSystem -CimSession $Session
 
-        #OutpuData
-        $os 
-    }#Foreach
+            #Close session
+            $Session|Remove-CimSession
+
+            #OutpuData
+            $os |Select-Object -Property @{n='ComputerName'; e={$ComputerName}},Version,ServicePackMajorVersion
+        }#Foreach
+    } #Process
+
+    End {}
+    
 }#Function
