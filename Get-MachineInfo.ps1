@@ -2,9 +2,11 @@ function Get-MachineInfo {
     
     [CmdletBinding()]
     param (
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline=$true,Manditory=$true,ValueFromPipelineByPropertyName=$true)]
+        [Alias('CN','MachineName','Name')]
         [string[]]$ComputerName,
         [string]$LogFailuresToPath,
+        [ValidateSet('Wsman','Dcom')]
         [string]$Protocol="Wsman",
         [switch]$ProtocolFallback
     )
@@ -35,5 +37,5 @@ function Get-MachineInfo {
     } #Process
 
     End {}
-    
+
 }#Function
